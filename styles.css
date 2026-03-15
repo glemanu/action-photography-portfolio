@@ -507,9 +507,15 @@ h3 {
 }
 
 .logo-img {
-  max-height: 3.5rem;
+  height: 1.5rem; /* Matches the original 1.5rem height of the circle container */
   width: auto;
   display: block;
+  transform-origin: left center;
+  transition: transform var(--transition-medium);
+}
+
+.logo-container:hover .logo-img {
+  transform: scale(1.05);
 }
 
 /* ========================================= */
@@ -524,6 +530,13 @@ h3 {
     justify-content: space-between;
     gap: 15px;
     padding: 1rem;
+    width: 100%;
+    pointer-events: none; /* Let clicks pass through empty space to the canvas */
+  }
+  
+  /* Re-enable pointer events for interactive things */
+  .logo-container, .values-section ul, .social-section ul, .links-section {
+    pointer-events: auto;
   }
   
   .location-section, .contact-section, .coordinates-section, .info-section {
@@ -536,21 +549,44 @@ h3 {
     text-align: left;
   }
 
+  /* Make sure the main header columns take appropriate space */
+  .nav-section {
+    flex: 1 1 50%;
+  }
+
+  .values-section {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .values-section h3, .social-section h3 {
     display: none;
   }
 
-  .values-section ul, .social-section ul {
+  .values-section ul {
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .social-section ul {
     display: flex;
     gap: 15px;
     margin: 0;
   }
 
   .logo-img {
-    max-height: 2.5rem;
+    height: 1.5rem;
   }
   
   .social-section {
     text-align: left;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
   }
 }
