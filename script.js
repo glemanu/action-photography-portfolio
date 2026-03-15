@@ -120,6 +120,13 @@ let titleSplit = null;
 let activeCaptionNameSplit = null;
 let activeCaptionNumberSplit = null;
 let paneInstance = null;
+
+// Lightbox Navigation state
+const lightboxNav = document.getElementById("lightbox-nav");
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+let currentLightboxIndex = -1;
+
 // Initialize Tweakpane
 function initTweakpane() {
   // Wait for Pane to be available (imported via ES module)
@@ -642,6 +649,11 @@ function expandItem(item, itemIndex) {
   // Add active class to overlay but animate opacity with GSAP
   overlay.classList.add("active");
   animateOverlayIn();
+  
+  // Show lightbox navigation
+  currentLightboxIndex = itemIndex;
+  lightboxNav.classList.add("active");
+
   expandedItem = document.createElement("div");
   expandedItem.className = "expanded-item";
   expandedItem.style.width = `${itemWidth}px`;
@@ -693,6 +705,9 @@ function closeExpandedItem() {
   if (!expandedItem || !originalPosition) return;
   animateTitleOut();
   animateOverlayOut();
+  
+  // Hide lightbox navigation
+  lightboxNav.classList.remove("active");
   // Fade in other items with GSAP
   document.querySelectorAll(".item").forEach((el) => {
     if (el.id !== activeItemId) {
@@ -810,6 +825,81 @@ function closeExpandedItem() {
     }
   });
 }
+
+function navigateLightbox(direction) {
+  if (!isExpanded || !expandedItem) return;
+
+  // Calculate new index wrapping around the array
+  currentLightboxIndex = (currentLightboxIndex + direction + itemCount) % itemCount;
+
+  // Find the theoretical next item ID (it may or may not be rendered in the DOM currently)
+  // We calculate its grid coordinates based on its index
+  // Assuming 4 columns as defined in active grid Logic
+  const nextItemCol = currentLightboxIndex % columns;
+  const nextItemRow = Math.floor(currentLightboxIndex / columns);
+  const nextItemId = `${nextItemCol},${nextItemRow}`;
+  
+  // Since the user might have panned the grid, jump the canvas target to the target item so we keep position synced
+  const position = getItemPosition(nextItemCol, nextItemRow);
+  targetX = -position.x + window.innerWidth / 2 - cellWidth / 2;
+  targetY = -position.y + window.innerHeight / 2 - cellHeight / 2;
+  
+  // Force grid update to ensure target DOM object exists before expanding
+  updateVisibleItems();
+
+  const nextItemEl = document.getElementById(nextItemId);
+  
+  if (nextItemEl) {
+    // If the element exists in DOM, we can seamlessly close the current and instantly open the new
+    
+    // Fade out everything EXCEPT the new active element to prevent flashing
+    document.querySelectorAll(".item").forEach((el) => {
+      if (el.id !== nextItemId) {
+        gsap.to(el, { opacity: 0, duration: 0.1 });
+      } else {
+        gsap.to(el, { opacity: 1, duration: 0 }); // guarantee visibility of target
+      }
+    });
+
+    // Close the current layout silently (without animating it back to layout)
+    if (expandedItem && expandedItem.parentNode) {
+      document.body.removeChild(expandedItem);
+    }
+    
+    isExpanded = false; // Temporarily reset state flag
+    
+    // Clear out titles instantly so expandItem can re-animate them
+    if (titleSplit) {
+      gsap.set(titleSplit.words, { y: "100%", opacity: 0 });
+    }
+
+    // Call expandItem on the new element
+    expandItem(nextItemEl, currentLightboxIndex);
+  }
+}
+
+// Lightbox specific event listeners
+prevBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  navigateLightbox(-1);
+});
+
+nextBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  navigateLightbox(1);
+});
+
+window.addEventListener("keydown", (e) => {
+  if (isExpanded) {
+    if (e.key === "ArrowLeft") {
+      navigateLightbox(-1);
+    } else if (e.key === "ArrowRight") {
+      navigateLightbox(1);
+    } else if (e.key === "Escape") {
+      closeExpandedItem();
+    }
+  }
+});
 
 function animate() {
   if (canDrag) {

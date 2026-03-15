@@ -485,6 +485,48 @@ h3 {
   /* Same as project-title to be above expanded-item */
 }
 
+/* Lightbox Navigation Styles */
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4vw;
+  pointer-events: none; /* Let clicks pass through empty space */
+  z-index: 10001; /* Above expanded item overlay, below title */
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+}
+
+.lightbox-nav.active {
+  opacity: 1;
+  pointer-events: auto; /* Re-enable clicks on arrows */
+}
+
+.nav-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
 /* Clone styles for animation */
 .caption-clone {
   position: fixed;
