@@ -60,7 +60,7 @@ const settings = {
   baseWidth: 400,
   smallHeight: 330,
   largeHeight: 500,
-  itemGap: 65,
+  itemGap: 0,
   hoverScale: 1.05,
   expandedScale: 0.4, // Percentage of viewport width
   dragEase: 0.075,

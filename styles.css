@@ -495,3 +495,62 @@ h3 {
 .caption-clone .item-number {
   overflow: hidden;
 }
+
+/* ========================================= */
+/* Logo overrides */
+/* ========================================= */
+
+.logo-container {
+  margin-bottom: 0;
+  display: block;
+  position: relative;
+}
+
+.logo-img {
+  max-height: 3.5rem;
+  width: auto;
+  display: block;
+}
+
+/* ========================================= */
+/* Mobile Responsiveness */
+/* ========================================= */
+
+@media (max-width: 800px) {
+  .header, .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 1rem;
+  }
+  
+  .location-section, .contact-section, .coordinates-section, .info-section {
+    display: none;
+  }
+  
+  .nav-section, .values-section, .social-section, .links-section {
+    grid-column: auto;
+    width: auto;
+    text-align: left;
+  }
+
+  .values-section h3, .social-section h3 {
+    display: none;
+  }
+
+  .values-section ul, .social-section ul {
+    display: flex;
+    gap: 15px;
+    margin: 0;
+  }
+
+  .logo-img {
+    max-height: 2.5rem;
+  }
+  
+  .social-section {
+    text-align: left;
+  }
+}
